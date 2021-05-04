@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+{% if not tasks %}
+<h2>Home Page</h2>
+<p>Welcome back, {{ username }}!</p>
+{% else %}
+<h2>Home Page</h2>
+<p>Welcome back, {{ username }}!</p>
+{% for task in tasks %}
+<div>
+    <table>
+        <tr>
+            <td>Name:</td>
+            <td>{{ task['name'] }}</td>
+        </tr>
+        <tr>
+            <td>Description:</td>
+            <td>{{ task['description'] }}</td>
+        </tr>
+        <tr>
+            <td>Time:</td>
+            <td>{{ task['time'] }}</td>
+        </tr>
+    </table>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}
