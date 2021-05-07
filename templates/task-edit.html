@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+    <h2>{{ page }} задания</h2>
+    <div>
+        <div>
+
+            <form action="" method="post">
+                <label for="groupname">Группа</label>
+                <input type="text" value="{{ task['groupname'] }}" name="groupname" id="groupname" placeholder="Группа">
+                <label for="name">Название задания</label>
+{#                <textarea name="content">{{ task['name'] }}</textarea>#}
+                <input type="text" value="{{ task['name'] }}" name="name" id="name" placeholder="Название задания">
+                <label for="description">Описание задания</label>
+{#                 <textarea name="content">{{ task['description'] }}</textarea>#}
+                <input type="text" value="{{ task['description'] }}" name="description" id="description" placeholder="Описание задания">
+                <label for="time">Дедлайн</label>
+                <input type="text" value="{{ task['time'] }}" name="time" id="time" placeholder="гггг-мм-дд чч:мм:сс">
+                <br>
+                <input type="submit" name="submit" value="Отправить">
+                {% if page == 'Редактирование' %}
+                <input type="submit" name="delete" value="Удалить" class="delete">
+                {% endif %}
+            </form>
+            <p>{{ msg }}</p>
+        </div>
+    </div>
+{% endblock %}

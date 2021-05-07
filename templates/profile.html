@@ -3,12 +3,12 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<h2>Profile Page</h2>
+<h2>Профиль</h2>
 <div>
-    <p>Your account details are below:</p>
+    <p>Данные вашего аккаунта:</p>
     <table>
         <tr>
-            <td>Username:</td>
+            <td>Имя пользователя:</td>
             <td>{{ account['username'] }}</td>
         </tr>
         <tr>
@@ -16,10 +16,10 @@
             <td>{{ account['email'] }}</td>
         </tr>
         <tr>
-            <td>Role:</td>
+            <td>Роль:</td>
             <td>{{ account['role'] }}</td>
         </tr>
     </table>
-    <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+    <a href="{{ url_for('edit_profile') }}">Редактировать профиль</a>
 </div>
 {% endblock %}

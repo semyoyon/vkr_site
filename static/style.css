@@ -187,9 +187,9 @@ body.loggedin {
   background-color: #fff;
 }
 
-.content > p table, .content > div table {
-  width: 100%;
-}
+/*.content > p table, .content > div table {*/
+/*  width: auto;*/
+/*}*/
 
 .content > p table td, .content > div table td {
   overflow: hidden;
@@ -204,6 +204,7 @@ body.loggedin {
 
 .content > p table td:last-child, .content > div table td:last-child {
   word-break: break-all;
+  padding-left: 100px;
 }
 
 .content > div p {

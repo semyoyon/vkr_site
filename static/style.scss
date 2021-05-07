@@ -176,7 +176,7 @@ body.loggedin {
 				&:first-child {
 					font-weight: bold;
 					color: darken($loggedin-background-color, 60);
-					padding-right: 15px;
+					padding-right: 5px;
 				}
 				&:last-child {
 					word-break: break-all;

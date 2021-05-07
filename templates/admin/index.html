@@ -3,10 +3,10 @@
 {% block title %}Accounts{% endblock %}
 
 {% block content %}
-<h2>Accounts</h2>
+<h2>Аккаунты</h2>
 
 <div class="links">
-    <a href="{{ url_for('admin_account') }}">Create Account</a>
+    <a href="{{ url_for('admin_account') }}">Создать аккаунт</a>
 </div>
 
 <div class="content-block">
@@ -15,17 +15,17 @@
             <thead>
                 <tr>
                     <td>#</td>
-                    <td>Username</td>
-                    <td class="responsive-hidden">Password</td>
+                    <td>Имя пользователя</td>
+                    <td class="responsive-hidden">Пароль</td>
                     <td class="responsive-hidden">Email</td>
-                    <td class="responsive-hidden">Activation Code</td>
-                    <td class="responsive-hidden">Role</td>
+                    <td class="responsive-hidden">Код активации</td>
+                    <td class="responsive-hidden">Роль</td>
                 </tr>
             </thead>
             <tbody>
                 {% if not accounts %}
                 <tr>
-                    <td colspan="8" style="text-align:center;">There are no accounts</td>
+                    <td colspan="8" style="text-align:center;">Нет аккаунтов</td>
                 </tr>
                 {% else %}
                 {% for account in accounts %}

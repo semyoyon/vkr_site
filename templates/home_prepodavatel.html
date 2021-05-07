@@ -7,8 +7,12 @@
 <h2>Домашняя страница</h2>
 <p>Здравствуйте, {{ username }}!</p>
 {% else %}
-<h2>Домашняя страница</h2>
-<p>Здравствуйте, {{ username }}!</p>
+<h2>Домашная страница</h2>
+    <div>
+<p>Здравствуйте, {{ username }}!
+    <br>
+<a href="{{ url_for('create_task') }}">Создать задание</a></p>
+    </div>
 {% for task in tasks %}
 <div>
     <table>
@@ -29,6 +33,7 @@
             <td>{{ task['time'] }}</td>
         </tr>
     </table>
+    <a href="{{ url_for('edit_task', id=task['id']) }}">Редактировать задание</a>
 </div>
 {% endfor %}
 {% endif %}

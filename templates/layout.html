@@ -10,13 +10,13 @@
 	<body class="loggedin">
 		<nav class="navtop">
 			<div>
-				<h1>Website Title</h1>
-                <a href="{{ url_for('home') }}"><i class="fas fa-home"></i>Home</a>
-				<a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i>Profile</a>
+				<h1>LMS Финансовый Университет</h1>
+                <a href="{{ url_for('home') }}"><i class="fas fa-home"></i>Главная</a>
+				<a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i>Профиль</a>
 				{% if role == 'Admin' %}
-				<a href="{{ url_for('admin') }}"><i class="fas fa-cog"></i>Admin</a>
+				<a href="{{ url_for('admin') }}"><i class="fas fa-cog"></i>Админ панель</a>
 				{% endif %}
-				<a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+				<a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Выйти</a>
 			</div>
 		</nav>
 		<div class="content">

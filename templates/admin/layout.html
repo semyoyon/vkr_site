@@ -9,15 +9,15 @@
 	</head>
 	<body class="admin">
         <header>
-            <h1>Admin Panel</h1>
+            <h1>Админ панель</h1>
             <a class="responsive-toggle" href="#">
                 <i class="fas fa-bars"></i>
             </a>
         </header>
         <aside class="responsive-width-100 responsive-hidden">
-            <a href="{{ url_for('admin') }}"><i class="fas fa-users"></i>Accounts</a>
-            <a href="{{ url_for('admin_emailtemplate') }}"><i class="fas fa-envelope"></i>Email Template</a>
-            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Log Out</a>
+            <a href="{{ url_for('admin') }}"><i class="fas fa-users"></i>Аккаунты</a>
+            <a href="{{ url_for('admin_emailtemplate') }}"><i class="fas fa-envelope"></i>Настройка email</a>
+            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Выйти</a>
         </aside>
         <main class="responsive-width-100">
 			{% block content %}{% endblock %}

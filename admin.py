@@ -20,7 +20,7 @@ def admin_account(id):
     # Check if admin is logged-in
     if not admin_loggedin():
         return redirect(url_for('login'))
-    page = 'Create'
+    page = 'Создать'
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     # Default input account values
     account = {
@@ -35,7 +35,7 @@ def admin_account(id):
     # GET request ID exists, edit account
     if id:
         # Edit an existing account
-        page = 'Edit'
+        page = 'Редактировать'
         # Retrieve account by ID with the GET request ID
         cursor.execute('SELECT * FROM accounts WHERE id = %s', (id,))
         account = cursor.fetchone()

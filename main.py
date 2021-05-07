@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, m
 from flask_mysqldb import MySQL
 from flask_mail import Mail, Message
 import MySQLdb.cursors, re, uuid, hashlib, datetime, os
+import sys
 
 app = Flask(__name__)
 
@@ -64,7 +65,8 @@ def login():
 		# Fetch one record and return result
 		account = cursor.fetchone()
 		cursor.execute('SELECT * FROM groups_connector WHERE id_person = %s', (account['id'],))
-		group_connector = cursor.fetchone()
+		group_connector = cursor.fetchall()
+
 		# If account exists in accounts table in out database
 		if account:
 			if account_activation_required and account['activation_code'] != 'activated' and account['activation_code'] != '':
@@ -75,7 +77,10 @@ def login():
 			session['loggedin'] = True
 			session['id'] = account['id']
 			try:
-				session['id_group'] = group_connector['id_group']
+				session['id_group'] = []
+				for row in group_connector:
+					session['id_group'].append(row['id_group'])
+				print(session['id_group'], file=sys.stderr)
 			except:
 				session['id_group'] = 0
 			session['username'] = account['username']
@@ -205,23 +210,31 @@ def home():
 		# User is loggedin show them the home page
 		try:
 			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-			cursor.execute('SELECT * FROM tasks WHERE id_task_group = %s', (session['id_group'],))
+			#cursor.execute('SELECT * FROM tasks WHERE id_task_group = %s', (session['id_group'],))
+			cursor.execute('SELECT t1.id, t1.name, t1.description, t1.time, t1.file, t2.groupname FROM tasks AS t1 INNER JOIN groups AS t2 ON t1.id_task_group IN %s AND t1.id_task_group = t2.id',(session['id_group'],))
 			tasks = cursor.fetchall()
 		except:
 			pass
 		return render_template('home.html', username=session['username'], tasks=tasks, role=session['role'])
 	# User is not loggedin redirect to login page
-	return redirect(url_for('login'))
 
-	if prepodavatel_loggedin():
+	elif prepodavatel_loggedin():
 		# User is loggedin show them the home page
 		try:
 			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-			cursor.execute('SELECT * FROM tasks WHERE id_task_group = %s', (session['id_group'],))
+			cursor.execute('SELECT t1.id, t1.name, t1.description, t1.time, t1.file, t2.groupname FROM tasks AS t1 INNER JOIN groups AS t2 ON t1.id_task_group IN %s AND t1.id_task_group = t2.id', (session['id_group'],))
+			# cursor.execute('SELECT * FROM tasks WHERE id_task_group IN %s', (session['id_group'],))
 			tasks = cursor.fetchall()
+			print(tasks, file=sys.stderr)
+
 		except:
 			pass
-		return render_template('home.html', username=session['username'], tasks=tasks, role=session['role'])
+		return render_template('home_prepodavatel.html', username=session['username'], tasks=tasks, role=session['role'])
+
+	elif admin_loggedin():
+		# User is loggedin show them the home page
+
+		return render_template('home.html', username=session['username'], role=session['role'])
 	# User is not loggedin redirect to login page
 	return redirect(url_for('login'))
 
@@ -288,6 +301,60 @@ def edit_profile():
 		# Show the profile page with account info
 		return render_template('profile-edit.html', account=account, role=session['role'], msg=msg)
 	return redirect(url_for('login'))
+@app.route('/pythonlogin/task/edit/<int:id>', methods=['GET', 'POST'])
+def edit_task(id):
+	# Check if user is loggedin
+	if prepodavatel_loggedin():
+		page = 'Редактирование'
+		cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+		# Check if "username", "password" and "email" POST requests exist (user submitted form)
+		cursor.execute('SELECT t1.id, t1.name, t1.description, t1.time, t1.file, t2.groupname FROM tasks as t1 INNER JOIN groups as t2 ON t1.id = %s AND t1.id_task_group = t2.id', (id,))
+		task = cursor.fetchone()
+		tasks = cursor.fetchone()
+		msg = ''
+		# return render_template('task-edit.html', account=account, task=task, role=session['role'], msg=msg)
+		if request.method == 'POST' and 'submit' in request.form:
+			name = request.form['name']
+			description = request.form['description']
+			time = request.form['time']
+			# print(id, file=sys.stderr)
+			cursor.execute('UPDATE tasks SET name = %s, description = %s, time = %s WHERE id = %s', (name, description, time, id,))
+			mysql.connection.commit()
+			cursor.execute('SELECT t1.id, t1.name, t1.description, t1.time, t1.file, t2.groupname FROM tasks as t1 INNER JOIN groups as t2 ON t1.id = %s AND t1.id_task_group = t2.id',(id,))
+			task = cursor.fetchone()
+			msg = 'Updated!'
+		if request.method == 'POST' and 'delete' in request.form:
+			cursor.execute('DELETE FROM tasks WHERE id = %s', (id,))
+			mysql.connection.commit()
+			return redirect(url_for('home'))
+		return render_template('task-edit.html', task=task, page=page, role=session['role'], msg=msg)
+
+	return redirect(url_for('login'))
+
+@app.route('/pythonlogin/task/create', methods=['GET', 'POST'])
+def create_task():
+	# Check if user is loggedin
+	if prepodavatel_loggedin():
+		page = 'Создание'
+		task = {
+			'groupname': '',
+			'name': '',
+			'description': '',
+			'time': '',
+		}
+		msg = ''
+
+		if request.method == 'POST' and request.form['submit']:
+			cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+			cursor.execute('SELECT id FROM groups WHERE groupname = (%s)',(request.form['groupname'],))
+			group_id = cursor.fetchone()
+			print(group_id['id'], file=sys.stderr)
+			cursor.execute('INSERT INTO tasks (name,description,time,id_task_group) VALUES (%s,%s,%s,%s)', (request.form['name'], request.form['description'], request.form['time'], group_id['id'], ))
+			mysql.connection.commit()
+			return redirect(url_for('home'))
+		return render_template('task-edit.html', task=task, page=page, role=session['role'], msg=msg)
+	return redirect(url_for('login'))
+
 
 # http://localhost:5000/pythinlogin/forgotpassword - user can use this page if they have forgotten their password
 @app.route('/pythonlogin/forgotpassword', methods=['GET', 'POST'])
@@ -368,14 +435,14 @@ def loggedin():
 		# check if remembered, cookie has to match the "rememberme" field
 		cursor.execute('SELECT * FROM accounts WHERE rememberme = %s', (request.cookies['rememberme'],))
 		account = cursor.fetchone()
-		cursor.execute('SELECT * FROM groups_connector WHERE id_person = %s', (account['id'],))
+		cursor.execute('SELECT id_group FROM groups_connector WHERE id_person = %s', (account['id'],))
 		group_connector = cursor.fetchone()
 		if account:
 			# update session variables
 			session['loggedin'] = True
 			session['id'] = account['id']
 			try:
-				session['id_group'] = group_connector['id_group']
+				session['id_group'] = group_connector
 			except:
 				session['id_group'] = 0
 			session['username'] = account['username']
